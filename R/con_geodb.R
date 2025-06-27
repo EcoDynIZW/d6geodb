@@ -1,0 +1,24 @@
+#' connect to database
+#' So not change the credentials. This will automatically filled by the db_source file.
+#'
+#' @param db name of database
+#' @param host_db host name
+#' @param db_port port
+#' @param db_user user_name
+#' @param db_password password
+#' @export
+#' @examples
+#' \dontrun{
+#' con_geodb()
+#' }
+
+
+con_geodb <- function(){
+  dbConnect(RPostgres::Postgres(),
+                   dbname = db,
+                   host=host_db,
+                   port=db_port,
+                   user=db_user,
+                   password=db_password)
+
+}

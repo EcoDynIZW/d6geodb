@@ -4,10 +4,10 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' source_db()
+#' source_geodb()
 #' }
 
 
-source_db <- function(path){
+source_geodb <- function(path){
   source(file = path)
 }
