@@ -30,6 +30,7 @@ col <- c(dbListFields(con_geodb(),
                 title = "select column"))]
 
 
+# does not work so far
 value <- c(as.vector(dbGetQuery(con_geodb(), glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
