@@ -13,12 +13,22 @@
 #' }
 
 
-con_geodb <- function(){
-  dbConnect(RPostgres::Postgres(),
+con_geodb <- function(intern = TRUE){
+  if(intern == TRUE){
+  return(dbConnect(RPostgres::Postgres(),
                    dbname = db,
                    host=host_db,
                    port=db_port,
                    user=db_user,
-                   password=db_password)
+                   password=db_password))
+  }
+  if(intern == FALSE){
+    return(dbConnect(RPostgres::Postgres(),
+              dbname = db,
+              host=host_db_ex,
+              port=db_port_ex,
+              user=db_user,
+              password=db_password))
+  }
 
 }

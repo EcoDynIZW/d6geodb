@@ -1,26 +1,18 @@
-#' overview of of geodatabes
+#' overview of geodatabase
 #'
-#' @param name complete name of data file
-#' @param region region of file
-#' @param  port
-#' @param db_user user_name
-#' @param column get column names
+#' Get the overview of the geodata in the database. You can decide which column you want to use for subsetting the data.
+#'
 #' @export
 #' @examples
 #' \dontrun{
-#' con_geodb()
+#' geodata_overview()
 #' }
 
+geodata_overview <- function(all = FALSE){
 
-con_geodb <- function(){
-  dbConnect(RPostgres::Postgres(),
-            dbname = db,
-            host=host_db,
-            port=db_port,
-            user=db_user,
-            password=db_password)
-
-}
+if(all == TRUE){
+  dbGetQuery(con_geodb(), glue::glue("SELECT name FROM geodata.metadata"))
+} else{
 
 col <- c(dbListFields(con_geodb(),
                Id(schema = "geodata",
@@ -31,19 +23,23 @@ col <- c(dbListFields(con_geodb(),
 
 
 # does not work so far
-value <- c(as.vector(dbGetQuery(con_geodb(), glue::glue("
+value <- dbGetQuery(con_geodb(), glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
-"))))[utils::menu(as.vector(dbGetQuery(con_geodb(), glue::glue("
+"))[,1][utils::menu(dbGetQuery(con_geodb(), glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
-"))),title = glue::glue("select ", col))]
+"))[,1],title = glue::glue("select ", col, ":"))]
+
+return(value)
+
+  }
+}
 
 
-dbGetQuery(con, glue::glue("SELECT name FROM metadata WHERE ",col," = '",,"'"))
 
 
-dbListFields(con_geodb(), Id(schema = "geodata", table = "metadata"))
+
 
 
 
