@@ -52,14 +52,14 @@ sub_name <- dbGetQuery(con_geodb(),
 
 if(stringr::str_detect(name, "tif")){
 
-  data <- rpostgis::pgGetRast(con_geodb(), glue::glue("geodata.",  sub_name))
+  data <- rpostgis::pgGetRast(con_geodb(), sub_name)
 
   return(data)
 }
 
 if(stringr::str_detect(name, "gpkg")){
 
-  data <- sf::st_read(con_geodb(), glue::glue("geodata.",  sub_name))
+  data <- sf::st_read(con_geodb(), glue::glue("geodata.", sub_name))
 
   return(data)
 }
@@ -81,7 +81,7 @@ if(stringr::str_detect(name, "gpkg")){
 
   if(stringr::str_detect(name, "gpkg")){
 
-    data <- sf::st_read(con_geodb(), glue::glue("geodata.", sub_name))
+    data <- sf::st_read(con_geodb(), sub_name)
 
     return(data)
   }
