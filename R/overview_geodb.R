@@ -10,23 +10,25 @@
 
 geodata_overview <- function(all = FALSE){
 
+  con <- con_geodb()
+
 if(all == TRUE){
-  dbGetQuery(con_geodb(), glue::glue("SELECT name FROM geodata.metadata"))
+  dbGetQuery(con, glue::glue("SELECT name FROM geodata.metadata"))
 } else{
 
-col <- c(dbListFields(con_geodb(),
+col <- c(DBI::dbListFields(con,
                Id(schema = "geodata",
-                  table = "metadata")))[utils::menu(c(dbListFields(con_geodb(),
+                  table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
                                                                    Id(schema = "geodata",
                                                                       table = "metadata")),
                 title = "select column"))]
 
 
 # does not work so far
-value <- dbGetQuery(con_geodb(), glue::glue("
+value <- DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
-"))[,1][utils::menu(dbGetQuery(con_geodb(), glue::glue("
+"))[,1][utils::menu(DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
 "))[,1],title = glue::glue("select ", col, ":"))]

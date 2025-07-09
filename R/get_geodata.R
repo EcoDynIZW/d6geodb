@@ -10,56 +10,57 @@
 #' get_geodata()
 #' }
 
-
-# DOES not work
-
 get_geodata <- function(name = NULL){
 
+  con <- con_geodb()
+
+  dbExecute(con, "SET search_path TO geodata")
+
   if(is.null(name)){
-    col <- c(dbListFields(con_geodb(),
+    col <- c(DBI::dbListFields(con,
                         Id(schema = "geodata",
-                           table = "metadata")))[utils::menu(c(dbListFields(con_geodb(),
+                           table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
                                                                             Id(schema = "geodata",
                                                                                table = "metadata")),
                                                                title = "select column"))]
 
 
   # does not work so far
-  value <- dbGetQuery(con_geodb(), glue::glue("
+  value <- DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
-"))[,1][utils::menu(dbGetQuery(con_geodb(), glue::glue("
+"))[,1][utils::menu(DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
 "))[,1],title = glue::glue("select ", col, ":"))]
 
-name <- dbGetQuery(con_geodb(),
+name <- DBI::dbGetQuery(con,
                    glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
                               col,
                               " = '",
                               value,
-                              "'"))[,1][utils::menu(dbGetQuery(con_geodb(),
+                              "'"))[,1][utils::menu(DBI::dbGetQuery(con,
                                                                glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
                                                                           col,
                                                                           " = '",
                                                                           value,
                                                                           "'"))[,1], title =  "select layer:")]
 
-sub_name <- dbGetQuery(con_geodb(),
+sub_name <- DBI::dbGetQuery(con,
                        glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
                                   name,
                                   "'"))[,1]
 
 if(stringr::str_detect(name, "tif")){
 
-  data <- rpostgis::pgGetRast(con_geodb(), sub_name)
+  data <- rpostgis::pgGetRast(con, sub_name)
 
   return(data)
 }
 
 if(stringr::str_detect(name, "gpkg")){
 
-  data <- sf::st_read(con_geodb(), glue::glue("geodata.", sub_name))
+  data <- sf::st_read(con, sub_name)
 
   return(data)
 }
@@ -67,21 +68,21 @@ if(stringr::str_detect(name, "gpkg")){
 
 } else {
 
-  sub_name <- dbGetQuery(con_geodb(),
+  sub_name <- DBI::dbGetQuery(con,
                          glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
                                     name,
                                     "'"))[,1]
 
   if(stringr::str_detect(name, "tif")){
 
-    data <- rpostgis::pgGetRast(con_geodb(), glue::glue("geodata.", sub_name))
+    data <- rpostgis::pgGetRast(con, sub_name)
 
     return(data)
   }
 
   if(stringr::str_detect(name, "gpkg")){
 
-    data <- sf::st_read(con_geodb(), sub_name)
+    data <- sf::st_read(con, sub_name)
 
     return(data)
   }
