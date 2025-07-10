@@ -1,7 +1,7 @@
 #' overview of geodatabase
 #'
 #' Get the overview of the geodata in the database. You can decide which column you want to use for subsetting the data.
-#'
+#' @param all see the whole meta data table
 #' @export
 #' @examples
 #' \dontrun{
@@ -13,13 +13,13 @@ geodata_overview <- function(all = FALSE){
   con <- con_geodb()
 
 if(all == TRUE){
-  dbGetQuery(con, glue::glue("SELECT name FROM geodata.metadata"))
+  DBI::dbGetQuery(con, glue::glue("SELECT name FROM geodata.metadata"))
 } else{
 
 col <- c(DBI::dbListFields(con,
-               Id(schema = "geodata",
+                           DBI::Id(schema = "geodata",
                   table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
-                                                                   Id(schema = "geodata",
+                                                                        DBI::Id(schema = "geodata",
                                                                       table = "metadata")),
                 title = "select column"))]
 

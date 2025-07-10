@@ -14,13 +14,13 @@ get_geodata <- function(name = NULL){
 
   con <- con_geodb()
 
-  dbExecute(con, "SET search_path TO geodata")
+  DBI::dbExecute(con, "SET search_path TO geodata")
 
   if(is.null(name)){
     col <- c(DBI::dbListFields(con,
-                        Id(schema = "geodata",
+                               DBI::Id(schema = "geodata",
                            table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
-                                                                            Id(schema = "geodata",
+                                                                                 DBI::Id(schema = "geodata",
                                                                                table = "metadata")),
                                                                title = "select column"))]
 

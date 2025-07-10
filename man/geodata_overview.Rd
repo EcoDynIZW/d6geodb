@@ -6,6 +6,9 @@
 \usage{
 geodata_overview(all = FALSE)
 }
+\arguments{
+\item{all}{see the whole meta data table}
+}
 \description{
 Get the overview of the geodata in the database. You can decide which column you want to use for subsetting the data.
 }

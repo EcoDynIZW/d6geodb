@@ -5,7 +5,10 @@
 #' @param host_db host name
 #' @param db_port port
 #' @param db_user user_name
+#' @param host_db_ex external hostname
+#' @param db_port_ex external port
 #' @param db_password password
+#' @param intern are you in the izw network?
 #' @export
 #' @examples
 #' \dontrun{
@@ -13,7 +16,7 @@
 #' }
 
 
-con_geodb <- function(intern = TRUE){
+con_geodb <- function(db, host_db, db_port, db_user, db_password, host_db_ex, db_port_ex, intern = TRUE){
   if(intern == TRUE){
   con <- DBI::dbConnect(RPostgres::Postgres(),
                    dbname = db,
