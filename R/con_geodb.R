@@ -16,7 +16,14 @@
 #' }
 
 
-con_geodb <- function(db, host_db, db_port, db_user, db_password, host_db_ex, db_port_ex, intern = TRUE){
+con_geodb <- function(db = db,
+                      host_db = host_db,
+                      db_port = db_port,
+                      db_user = db_user,
+                      db_password = db_password,
+                      host_db_ex = host_db_ex,
+                      db_port_ex = db_port_ex,
+                      intern = TRUE){
   if(intern == TRUE){
   con <- DBI::dbConnect(RPostgres::Postgres(),
                    dbname = db,
