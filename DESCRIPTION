@@ -15,7 +15,8 @@ Imports:
     glue,
     rpostgis,
     RPostgres,
-    stringr
+    stringr,
+    terra
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

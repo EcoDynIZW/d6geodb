@@ -4,10 +4,12 @@
 \alias{get_geodata}
 \title{get data of the database}
 \usage{
-get_geodata(name = NULL)
+get_geodata(name = NULL, download = FALSE)
 }
 \arguments{
 \item{name}{name of the data, if null you can decide from the database itself.}
+
+\item{download}{do you want the data to be downloaded?}
 }
 \description{
 Get the data from the overview or directly set the name of the data.
