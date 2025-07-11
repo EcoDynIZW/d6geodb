@@ -78,8 +78,6 @@ if(stringr::str_detect(name, "gpkg")){
 
     data <- rpostgis::pgGetRast(con, sub_name)
 
-    return(data)
-
     if(download == TRUE){
       dir.create(paste(getwd(),
                        "data",
@@ -101,13 +99,13 @@ if(stringr::str_detect(name, "gpkg")){
                       sep = "/"),
                 row.names = FALSE)
     }
+
+    return(data)
   }
 
   if(stringr::str_detect(name, "gpkg")){
 
     data <- sf::st_read(con, sub_name)
-
-    return(data)
 
     if(download == TRUE){
       dir.create(paste(getwd(),
@@ -130,6 +128,9 @@ if(stringr::str_detect(name, "gpkg")){
                       sep = "/"),
                 row.names = FALSE)
     }
+
+    return(data)
+
   }
 }
 
