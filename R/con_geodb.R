@@ -1,13 +1,6 @@
 #' connect to database
 #' So not change the credentials. This will automatically filled by the db_source file.
 #'
-#' @param db name of database
-#' @param host_db host name
-#' @param db_port port
-#' @param db_user user_name
-#' @param host_db_ex external hostname
-#' @param db_port_ex external port
-#' @param db_password password
 #' @param intern are you in the izw network?
 #' @export
 #' @examples
@@ -16,14 +9,7 @@
 #' }
 
 
-con_geodb <- function(db = db,
-                      host_db = host_db,
-                      db_port = db_port,
-                      db_user = db_user,
-                      db_password = db_password,
-                      host_db_ex = host_db_ex,
-                      db_port_ex = db_port_ex,
-                      intern = TRUE){
+con_geodb <- function(intern = TRUE){
   if(intern == TRUE){
   con <- DBI::dbConnect(RPostgres::Postgres(),
                    dbname = db,
