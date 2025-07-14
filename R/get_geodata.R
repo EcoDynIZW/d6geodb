@@ -19,14 +19,14 @@ get_geodata <- function(name = NULL){
   if(is.null(name)){
     col <- c(DBI::dbListFields(con,
                                DBI::Id(schema = "geodata",
-                           table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
-                                                                                 DBI::Id(schema = "geodata",
-                                                                               table = "metadata")),
-                                                               title = "select column"))]
+                                       table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
+                                                                                             DBI::Id(schema = "geodata",
+                                                                                                     table = "metadata")),
+                                                                           title = "select column"))]
 
 
-  # does not work so far
-  value <- DBI::dbGetQuery(con, glue::glue("
+    # does not work so far
+    value <- DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
   FROM geodata.metadata
 "))[,1][utils::menu(DBI::dbGetQuery(con, glue::glue("
@@ -34,110 +34,109 @@ get_geodata <- function(name = NULL){
   FROM geodata.metadata
 "))[,1],title = glue::glue("select ", col, ":"))]
 
-name <- DBI::dbGetQuery(con,
-                   glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
-                              col,
-                              " = '",
-                              value,
-                              "'"))[,1][utils::menu(DBI::dbGetQuery(con,
-                                                               glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
-                                                                          col,
-                                                                          " = '",
-                                                                          value,
-                                                                          "'"))[,1], title =  "select layer:")]
+    name <- DBI::dbGetQuery(con,
+                            glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
+                                       col,
+                                       " = '",
+                                       value,
+                                       "'"))[,1][utils::menu(DBI::dbGetQuery(con,
+                                                                             glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
+                                                                                        col,
+                                                                                        " = '",
+                                                                                        value,
+                                                                                        "'"))[,1], title =  "select layer:")]
 
-sub_name <- DBI::dbGetQuery(con,
-                       glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
-                                  name,
-                                  "'"))[,1]
+    sub_name <- DBI::dbGetQuery(con,
+                                glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
+                                           name,
+                                           "'"))[,1]
 
-if(stringr::str_detect(name, "tif")){
+    if(stringr::str_detect(name, "tif")){
 
-  data <- rpostgis::pgGetRast(con, sub_name)
+      data <- rpostgis::pgGetRast(con, sub_name)
 
-  return(data)
-}
+    }
 
-if(stringr::str_detect(name, "gpkg")){
+    if(stringr::str_detect(name, "gpkg")){
 
-  data <- sf::st_read(con, sub_name)
+      data <- sf::st_read(con, sub_name)
 
-  return(data)
-}
+    }
 
 
-} else {
+  } else {
 
-  sub_name <- DBI::dbGetQuery(con,
-                         glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
-                                    name,
-                                    "'"))[,1]
+    sub_name <- DBI::dbGetQuery(con,
+                                glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
+                                           name,
+                                           "'"))[,1]
 
-  if(stringr::str_detect(name, "tif")){
+    if(stringr::str_detect(name, "tif")){
 
-    data <- rpostgis::pgGetRast(con, sub_name)
+      data <- rpostgis::pgGetRast(con, sub_name)
+    }
+
+    if(stringr::str_detect(name, "gpkg")){
+
+      data <- sf::st_read(con, sub_name)
+    }
   }
 
-  if(stringr::str_detect(name, "gpkg")){
-
-    data <- sf::st_read(con, sub_name)
-  }
-}
-
+  return(data)
 
 
   download <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the data?")]
 
   if(download == TRUE){
     if(stringr::str_detect(name, "gpkg")){
-        dir.create(paste(getwd(),
+      dir.create(paste(getwd(),
+                       "data",
+                       name,
+                       sep = "/"))
+
+      sf::st_write(data,
+                   paste(getwd(),
                          "data",
                          name,
+                         stringi::stri_replace_last_fixed(name, "_", "."),
                          sep = "/"))
 
-        sf::st_write(data,
-                     paste(getwd(),
-                           "data",
-                           name,
-                           stringi::stri_replace_last_fixed(name, "_", "."),
-                           sep = "/"))
-
-        write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
-                  paste(getwd(),
-                        "data",
-                        name,
-                        paste0("meta-data_", name, ".csv"),
-                        sep = "/"),
-                  row.names = FALSE)
+      write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
+                paste(getwd(),
+                      "data",
+                      name,
+                      paste0("meta-data_", name, ".csv"),
+                      sep = "/"),
+                row.names = FALSE)
     }
 
     if(stringr::str_detect(name, "tif")){
 
-        dir.create(paste(getwd(),
-                         "data",
-                         name,
-                         sep = "/"))
+      dir.create(paste(getwd(),
+                       "data",
+                       name,
+                       sep = "/"))
 
-        terra::writeRaster(data,
-                           paste(getwd(),
-                                 "data",
-                                 name,
-                                 stringi::stri_replace_last_fixed(name, "_", "."),
-                                 sep = "/"))
+      terra::writeRaster(data,
+                         paste(getwd(),
+                               "data",
+                               name,
+                               stringi::stri_replace_last_fixed(name, "_", "."),
+                               sep = "/"))
 
-        write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
-                  paste(getwd(),
-                        "data",
-                        name,
-                        paste0("meta-data_", name, ".csv"),
-                        sep = "/"),
-                  row.names = FALSE)
-      }
+      write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
+                paste(getwd(),
+                      "data",
+                      name,
+                      paste0("meta-data_", name, ".csv"),
+                      sep = "/"),
+                row.names = FALSE)
+    }
   }
 
-  return(data)
 
-  }
+}
+
 
 
 
