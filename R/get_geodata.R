@@ -82,9 +82,6 @@ get_geodata <- function(name = NULL){
     }
   }
 
-  return(data)
-
-
   download <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the data?")]
 
   if(download == TRUE){
@@ -134,7 +131,7 @@ get_geodata <- function(name = NULL){
     }
   }
 
-
+  return(data)
 }
 
 
