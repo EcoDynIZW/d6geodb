@@ -3,7 +3,6 @@
 #' Get the data from the overview or directly set the name of the data.
 #'
 #' @param name name of the data, if null you can decide from the database itself.
-#' @param download do you want the data to be downloaded?
 #'
 #' @export
 #' @examples
@@ -11,7 +10,7 @@
 #' get_geodata()
 #' }
 
-get_geodata <- function(name = NULL, download = FALSE){
+get_geodata <- function(name = NULL){
 
   con <- con_geodb()
 
@@ -78,56 +77,12 @@ if(stringr::str_detect(name, "gpkg")){
 
     data <- rpostgis::pgGetRast(con, sub_name)
 
-    if(download == TRUE){
-      dir.create(paste(getwd(),
-                       "data",
-                       name,
-                       sep = "/"))
-
-      terra::writeRaster(data,
-                         paste(getwd(),
-                               "data",
-                               name,
-                               stringi::stri_replace_last_fixed(name, "_", "."),
-                               sep = "/"))
-
-      write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
-                paste(getwd(),
-                      "data",
-                      name,
-                      paste0("meta-data_", name, ".csv"),
-                      sep = "/"),
-                row.names = FALSE)
-    }
-
     return(data)
   }
 
   if(stringr::str_detect(name, "gpkg")){
 
     data <- sf::st_read(con, sub_name)
-
-    if(download == TRUE){
-      dir.create(paste(getwd(),
-                       "data",
-                       name,
-                       sep = "/"))
-
-      sf::st_write(data,
-                         paste(getwd(),
-                               "data",
-                               name,
-                               stringi::stri_replace_last_fixed(name, "_", "."),
-                               sep = "/"))
-
-      write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
-                paste(getwd(),
-                      "data",
-                      name,
-                      paste0("meta-data_", name, ".csv"),
-                      sep = "/"),
-                row.names = FALSE)
-    }
 
     return(data)
 
@@ -136,5 +91,58 @@ if(stringr::str_detect(name, "gpkg")){
 
 return(data)
 
+  download <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the data?")]
 
-}
+  if(download == TRUE){
+    if(stringr::str_detect(name, "gpkg")){
+        dir.create(paste(getwd(),
+                         "data",
+                         name,
+                         sep = "/"))
+
+        sf::st_write(data,
+                     paste(getwd(),
+                           "data",
+                           name,
+                           stringi::stri_replace_last_fixed(name, "_", "."),
+                           sep = "/"))
+
+        write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
+                  paste(getwd(),
+                        "data",
+                        name,
+                        paste0("meta-data_", name, ".csv"),
+                        sep = "/"),
+                  row.names = FALSE)
+    }
+
+    if(stringr::str_detect(name, "tif")){
+
+        dir.create(paste(getwd(),
+                         "data",
+                         name,
+                         sep = "/"))
+
+        terra::writeRaster(data,
+                           paste(getwd(),
+                                 "data",
+                                 name,
+                                 stringi::stri_replace_last_fixed(name, "_", "."),
+                                 sep = "/"))
+
+        write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
+                  paste(getwd(),
+                        "data",
+                        name,
+                        paste0("meta-data_", name, ".csv"),
+                        sep = "/"),
+                  row.names = FALSE)
+      }
+  }
+
+  return(data)
+
+  }
+
+
+
