@@ -86,10 +86,14 @@ get_geodata <- function(name = NULL){
 
   if(download == TRUE){
     if(stringr::str_detect(name, "gpkg")){
-      dir.create(paste(getwd(),
-                       "data",
-                       name,
-                       sep = "/"))
+      if(!dir.exists(paste(getwd(),
+                           "data",
+                           name,
+                           sep = "/"))){
+        dir.create(paste(getwd(),
+                         "data",
+                         name,
+                         sep = "/"))}
 
       sf::st_write(data,
                    paste(getwd(),
@@ -109,10 +113,14 @@ get_geodata <- function(name = NULL){
 
     if(stringr::str_detect(name, "tif")){
 
-      dir.create(paste(getwd(),
-                       "data",
-                       name,
-                       sep = "/"))
+      if(!dir.exists(paste(getwd(),
+                           "data",
+                           name,
+                           sep = "/"))){
+        dir.create(paste(getwd(),
+                         "data",
+                         name,
+                         sep = "/"))}
 
       terra::writeRaster(data,
                          paste(getwd(),
