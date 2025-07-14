@@ -100,7 +100,7 @@ get_geodata <- function(name = NULL){
                          "data",
                          name,
                          stringi::stri_replace_last_fixed(name, "_", "."),
-                         sep = "/"))
+                         sep = "/"), delete_layer = TRUE)
 
       write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
                 paste(getwd(),
@@ -127,7 +127,7 @@ get_geodata <- function(name = NULL){
                                "data",
                                name,
                                stringi::stri_replace_last_fixed(name, "_", "."),
-                               sep = "/"))
+                               sep = "/"), overwrite = TRUE)
 
       write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
                 paste(getwd(),
