@@ -76,20 +76,15 @@ if(stringr::str_detect(name, "gpkg")){
   if(stringr::str_detect(name, "tif")){
 
     data <- rpostgis::pgGetRast(con, sub_name)
-
-    return(data)
   }
 
   if(stringr::str_detect(name, "gpkg")){
 
     data <- sf::st_read(con, sub_name)
-
-    return(data)
-
   }
 }
 
-return(data)
+
 
   download <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the data?")]
 
