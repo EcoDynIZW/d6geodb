@@ -99,14 +99,14 @@ get_geodata <- function(name = NULL, extent = NULL){
                        name,
                        sep = "/"))}
 
-    meta <- glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")
+    meta <- DBI::dbGetQuery(con,glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'"))
     meta$date_of_download_db <- Sys.Date()
 
     if(!is.null(extent)){
       meta$extent_used <- "yes"
     }
 
-    write.csv(DBI::dbGetQuery(con, meta),
+    write.csv(meta,
               paste(getwd(),
                     "data",
                     name,
