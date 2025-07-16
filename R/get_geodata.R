@@ -82,18 +82,30 @@ get_geodata <- function(name = NULL){
     }
   }
 
-  download <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the data?")]
+  download_meta <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the meta-data?")]
+  download_data <- c(TRUE, FALSE)[utils::menu(c("yes", "no"),title = "do you want to download the data?")]
 
-  if(download == TRUE){
-    if(stringr::str_detect(name, "gpkg")){
-      if(!dir.exists(paste(getwd(),
-                           "data",
-                           name,
-                           sep = "/"))){
-        dir.create(paste(getwd(),
+  if(download_meta == TRUE){
+    if(!dir.exists(paste(getwd(),
                          "data",
                          name,
-                         sep = "/"))}
+                         sep = "/"))){
+      dir.create(paste(getwd(),
+                       "data",
+                       name,
+                       sep = "/"))}
+
+    write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
+              paste(getwd(),
+                    "data",
+                    name,
+                    paste0("meta-data_", name, ".csv"),
+                    sep = "/"),
+              row.names = FALSE)
+
+    if(download_data == TRUE){
+    if(stringr::str_detect(name, "gpkg")){
+
 
       sf::st_write(data,
                    paste(getwd(),
@@ -102,25 +114,9 @@ get_geodata <- function(name = NULL){
                          stringi::stri_replace_last_fixed(name, "_", "."),
                          sep = "/"), delete_layer = TRUE)
 
-      write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
-                paste(getwd(),
-                      "data",
-                      name,
-                      paste0("meta-data_", name, ".csv"),
-                      sep = "/"),
-                row.names = FALSE)
     }
 
     if(stringr::str_detect(name, "tif")){
-
-      if(!dir.exists(paste(getwd(),
-                           "data",
-                           name,
-                           sep = "/"))){
-        dir.create(paste(getwd(),
-                         "data",
-                         name,
-                         sep = "/"))}
 
       terra::writeRaster(data,
                          paste(getwd(),
@@ -129,13 +125,7 @@ get_geodata <- function(name = NULL){
                                stringi::stri_replace_last_fixed(name, "_", "."),
                                sep = "/"), overwrite = TRUE)
 
-      write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
-                paste(getwd(),
-                      "data",
-                      name,
-                      paste0("meta-data_", name, ".csv"),
-                      sep = "/"),
-                row.names = FALSE)
+    }
     }
   }
 
