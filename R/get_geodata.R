@@ -3,6 +3,7 @@
 #' Get the data from the overview or directly set the name of the data.
 #'
 #' @param name name of the data, if null you can decide from the database itself.
+#' @param extent works for raster data only. You can use a sf object, SpatVector object, or numeric to get a subset of this extent of the object.
 #'
 #' @export
 #' @examples
@@ -10,7 +11,7 @@
 #' get_geodata()
 #' }
 
-get_geodata <- function(name = NULL){
+get_geodata <- function(name = NULL, extent = NULL){
 
   con <- con_geodb()
 
@@ -72,8 +73,11 @@ get_geodata <- function(name = NULL){
                                            "'"))[,1]
 
     if(stringr::str_detect(name, "tif")){
-
-      data <- rpostgis::pgGetRast(con, sub_name)
+      if(is.null(extent)){
+      data <- rpostgis::pgGetRast(conn = con, name = sub_name)
+      } else{
+        data <- rpostgis::pgGetRast(conn = con, name = sub_name, boundary = extent)
+      }
     }
 
     if(stringr::str_detect(name, "gpkg")){
@@ -95,7 +99,14 @@ get_geodata <- function(name = NULL){
                        name,
                        sep = "/"))}
 
-    write.csv(dbGetQuery(con, glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")),
+    meta <- glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'")
+    meta$date_of_download_db <- Sys.Date()
+
+    if(!is.null(extent)){
+      meta$extent_used <- "yes"
+    }
+
+    write.csv(dbGetQuery(con, meta),
               paste(getwd(),
                     "data",
                     name,

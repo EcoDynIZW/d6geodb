@@ -4,10 +4,12 @@
 \alias{get_geodata}
 \title{get data of the database}
 \usage{
-get_geodata(name = NULL)
+get_geodata(name = NULL, extent = NULL)
 }
 \arguments{
 \item{name}{name of the data, if null you can decide from the database itself.}
+
+\item{extent}{works for raster data only. You can use a sf object, SpatVector object, or numeric to get a subset of this extent of the object.}
 }
 \description{
 Get the data from the overview or directly set the name of the data.
