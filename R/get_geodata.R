@@ -106,7 +106,7 @@ get_geodata <- function(name = NULL, extent = NULL){
       meta$extent_used <- "yes"
     }
 
-    write.csv(dbGetQuery(con, meta),
+    write.csv(DBI::dbGetQuery(con, meta),
               paste(getwd(),
                     "data",
                     name,
