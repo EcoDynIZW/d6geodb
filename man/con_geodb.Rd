@@ -3,16 +3,17 @@
 \name{con_geodb}
 \alias{con_geodb}
 \title{connect to database
-So not change the credentials. This will automatically filled by the db_source file.}
+Provides a robust and flexible database connection utility
+that automatically manages the geodata-base connection between internal and external
+database hosts.}
 \usage{
 con_geodb(intern = TRUE)
 }
-\arguments{
-\item{intern}{are you in the izw network?}
-}
 \description{
 connect to database
-So not change the credentials. This will automatically filled by the db_source file.
+Provides a robust and flexible database connection utility
+that automatically manages the geodata-base connection between internal and external
+database hosts.
 }
 \examples{
 \dontrun{
