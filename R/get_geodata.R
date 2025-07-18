@@ -70,6 +70,10 @@ get_geodata <- function(name = NULL, extent = NULL){
                  as.numeric(ext_ras[2]), as.numeric(ext_ras[4]))
       }
 
+      if(is.numeric(extent)){
+        ext <-  as.numeric(sf::st_transform(sf::st_bbox(extent), meta$crs))
+      }
+
     }
 
 
