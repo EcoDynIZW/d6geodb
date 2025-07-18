@@ -57,17 +57,54 @@ get_geodata <- function(name = NULL, extent = NULL){
                                            name,
                                            "'"))[,1]
 
+    meta <- DBI::dbGetQuery(con,glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'"))
+
+    if(!is.null(extent)){
+      if(class(extent)[1] == "sf" | class(extent)[1] == "SpatVector"){
+        ext <- as.numeric(sf::st_bbox(sf::st_transform(sf::st_as_sf(extent), meta$crs)))
+      }
+
+      if(class(extent)[1] == "SpatRaster"){
+        ext_ras <- terra::ext(terra::project(extent, meta$crs))
+        ext <- c(as.numeric(ext_ras[1]), as.numeric(ext_ras[3]),
+                 as.numeric(ext_ras[2]), as.numeric(ext_ras[4]))
+      }
+
+    }
+
+
     if(stringr::str_detect(name, "tif")){
       if(is.null(extent)){
         data <- rpostgis::pgGetRast(conn = con, name = sub_name)
       } else{
-        data <- rpostgis::pgGetRast(conn = con, name = sub_name, boundary = extent)
+
+        data <- rpostgis::pgGetRast(conn = con,
+                                    name = sub_name,
+                                    boundary = c(ext[4], ext[2],
+                                                 ext[3], ext[1]))
+
       }
     }
 
     if(stringr::str_detect(name, "gpkg")){
-
+      if(is.null(extent)){
       data <- sf::st_read(con, sub_name)
+      } else{
+
+        data <- sf::st_read(dsn = con,
+                            query = glue::glue("SELECT * FROM ",
+                                                       sub_name,
+                                                       " WHERE ST_Intersects(geometry, ST_MakeEnvelope(",
+                                                       as.numeric(ext[1]),", ",
+                                                       as.numeric(ext[2]),", ",
+                                                       as.numeric(ext[3]),", ",
+                                                       as.numeric(ext[4]),", ",
+                                                       as.numeric(meta$epsg),"))"),
+                                               )
+
+
+
+      }
 
     }
 
@@ -83,13 +120,33 @@ get_geodata <- function(name = NULL, extent = NULL){
       if(is.null(extent)){
       data <- rpostgis::pgGetRast(conn = con, name = sub_name)
       } else{
-        data <- rpostgis::pgGetRast(conn = con, name = sub_name, boundary = extent)
+        data <- rpostgis::pgGetRast(conn = con,
+                                    name = sub_name,
+                                    boundary = c(ext[4], ext[2],
+                                                 ext[3], ext[1]))
       }
     }
 
     if(stringr::str_detect(name, "gpkg")){
 
-      data <- sf::st_read(con, sub_name)
+      if(is.null(extent)){
+        data <- sf::st_read(con, sub_name)
+      } else{
+
+        data <- sf::st_read(dsn = con,
+                            query = glue::glue("SELECT * FROM ",
+                                               sub_name,
+                                               " WHERE ST_Intersects(geometry, ST_MakeEnvelope(",
+                                               as.numeric(ext[1]),", ",
+                                               as.numeric(ext[2]),", ",
+                                               as.numeric(ext[3]),", ",
+                                               as.numeric(ext[4]),", ",
+                                               as.numeric(meta$epsg),"))"),
+        )
+
+
+
+      }
     }
   }
 
@@ -106,7 +163,7 @@ get_geodata <- function(name = NULL, extent = NULL){
                        name,
                        sep = "/"))}
 
-    meta <- DBI::dbGetQuery(con,glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'"))
+
     meta$date_of_download_db <- Sys.Date()
 
     if(!is.null(extent)){
