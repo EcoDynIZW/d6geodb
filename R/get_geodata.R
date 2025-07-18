@@ -3,7 +3,7 @@
 #' Get the data from the overview or directly set the name of the data.
 #'
 #' @param name name of the data, if null you can decide from the database itself.
-#' @param extent works for raster data only. You can use a sf object, SpatVector object, or numeric to get a subset of this extent of the object.
+#' @param extent please insert a spatRaster, spatVector or sf Object.
 #'
 #' @export
 #' @examples
