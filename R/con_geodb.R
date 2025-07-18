@@ -13,7 +13,7 @@
 con_geodb <- function() {
   # Versuch der internen Verbindung
   tryCatch({
-    con <- DBI::dbConnect(RPostgres::Postgres(),
+    con <<- DBI::dbConnect(RPostgres::Postgres(),
                           dbname = db,
                           host=host_db,
                           port=db_port,
@@ -30,7 +30,7 @@ con_geodb <- function() {
     message("Internal connection failed. Attempting external connection...")
 
     # Externe Verbindung
-    con <- DBI::dbConnect(RPostgres::Postgres(),
+    con <<- DBI::dbConnect(RPostgres::Postgres(),
                           dbname = db,
                           host=host_db_ex,
                           port=db_port_ex,

@@ -7,7 +7,7 @@ Provides a robust and flexible database connection utility
 that automatically manages the geodata-base connection between internal and external
 database hosts.}
 \usage{
-con_geodb(intern = TRUE)
+con_geodb()
 }
 \description{
 connect to database

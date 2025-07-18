@@ -13,7 +13,12 @@
 
 get_geodata <- function(name = NULL, extent = NULL){
 
-  con <- con_geodb()
+  if(exists("con") && !is.null(con)) {
+    con <- get("con", envir = .GlobalEnv)
+    RPostgres::dbIsValid(con)
+  } else {
+    con <- con_geodb()
+  }
 
   DBI::dbExecute(con, "SET search_path TO geodata")
 
@@ -53,9 +58,11 @@ get_geodata <- function(name = NULL, extent = NULL){
                                            "'"))[,1]
 
     if(stringr::str_detect(name, "tif")){
-
-      data <- rpostgis::pgGetRast(con, sub_name)
-
+      if(is.null(extent)){
+        data <- rpostgis::pgGetRast(conn = con, name = sub_name)
+      } else{
+        data <- rpostgis::pgGetRast(conn = con, name = sub_name, boundary = extent)
+      }
     }
 
     if(stringr::str_detect(name, "gpkg")){
