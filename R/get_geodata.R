@@ -23,12 +23,12 @@ get_geodata <- function(name = NULL, extent = NULL){
   DBI::dbExecute(con, "SET search_path TO geodata")
 
   if(is.null(name)){
-    col <- c(DBI::dbListFields(con,
-                               DBI::Id(schema = "geodata",
-                                       table = "metadata")))[utils::menu(c(DBI::dbListFields(con,
-                                                                                             DBI::Id(schema = "geodata",
-                                                                                                     table = "metadata")),
-                                                                           title = "select column"))]
+    fields <- DBI::dbListFields(con,
+                                DBI::Id(schema = "geodata",
+                                        table = "metadata"))
+
+    col <- c(fields[fields %in% c("name", "type", "region", "year_of_data")])[utils::menu(c(fields[fields %in% c("name", "type", "region", "year_of_data")]),
+                                                                           title = "select column")]
 
 
     # does not work so far
