@@ -119,7 +119,7 @@ get_geodata <- function(name = NULL, extent = NULL){
       data <- rpostgis::pgGetRast(conn = con, name = paste0("envdata.",sub_name))
       } else{
         data <- rpostgis::pgGetRast(conn = con,
-                                    name = sub_name,
+                                    name = paste0("envdata.",sub_name),
                                     boundary = c(ext[4], ext[2],
                                                  ext[3], ext[1]))
       }
