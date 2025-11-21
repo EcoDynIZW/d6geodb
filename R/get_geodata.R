@@ -20,11 +20,9 @@ get_geodata <- function(name = NULL, extent = NULL){
     con <- con_geodb()
   }
 
-  DBI::dbExecute(con, "SET search_path TO geodata")
-
   if(is.null(name)){
     fields <- DBI::dbListFields(con,
-                                DBI::Id(schema = "geodata",
+                                DBI::Id(schema = "envdata",
                                         table = "metadata"))
 
     col <- c(fields[fields %in% c("name", "type", "region", "year_of_data")])[utils::menu(c(fields[fields %in% c("name", "type", "region", "year_of_data")]),
@@ -34,26 +32,26 @@ get_geodata <- function(name = NULL, extent = NULL){
     # does not work so far
     value <- DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
-  FROM geodata.metadata
+  FROM envdata.metadata
 "))[,1][utils::menu(DBI::dbGetQuery(con, glue::glue("
   SELECT DISTINCT {'",col,"'}
-  FROM geodata.metadata
+  FROM envdata.metadata
 "))[,1],title = glue::glue("select ", col, ":"))]
 
     name <- DBI::dbGetQuery(con,
-                            glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
+                            glue::glue("SELECT folder_name FROM envdata.metadata WHERE ",
                                        col,
                                        " = '",
                                        value,
                                        "'"))[,1][utils::menu(DBI::dbGetQuery(con,
-                                                                             glue::glue("SELECT folder_name FROM geodata.metadata WHERE ",
+                                                                             glue::glue("SELECT folder_name FROM envdata.metadata WHERE ",
                                                                                         col,
                                                                                         " = '",
                                                                                         value,
                                                                                         "'"))[,1], title =  "select layer:")]
 
     sub_name <- DBI::dbGetQuery(con,
-                                glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
+                                glue::glue("SELECT sub_name FROM envdata.metadata WHERE folder_name = '",
                                            name,
                                            "'"))[,1]
 
@@ -112,7 +110,7 @@ get_geodata <- function(name = NULL, extent = NULL){
   } else {
 
     sub_name <- DBI::dbGetQuery(con,
-                                glue::glue("SELECT sub_name FROM geodata.metadata WHERE folder_name = '",
+                                glue::glue("SELECT sub_name FROM envdata.metadata WHERE folder_name = '",
                                            name,
                                            "'"))[,1]
 
