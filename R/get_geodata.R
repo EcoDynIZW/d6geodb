@@ -55,7 +55,7 @@ get_geodata <- function(name = NULL, extent = NULL){
                                            name,
                                            "'"))[,1]
 
-    meta <- DBI::dbGetQuery(con,glue::glue("SELECT * FROM metadata WHERE sub_name = '", sub_name,"'"))
+    meta <- DBI::dbGetQuery(con,glue::glue("SELECT * FROM envdata.metadata WHERE sub_name = '", sub_name,"'"))
 
     if(!is.null(extent)){
       if(class(extent)[1] == "sf" | class(extent)[1] == "SpatVector"){
