@@ -73,11 +73,11 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "tif")){
       if(is.null(extent)){
-        data <- rpostgis::pgGetRast(conn = con, name = sub_name)
+        data <- rpostgis::pgGetRast(conn = con, name = paste0("envdata.",sub_name))
       } else{
 
         data <- rpostgis::pgGetRast(conn = con,
-                                    name = sub_name,
+                                    name = paste0("envdata.",sub_name),
                                     boundary = c(ext[4], ext[2],
                                                  ext[3], ext[1]))
 
@@ -86,7 +86,7 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "gpkg")){
       if(is.null(extent)){
-      data <- sf::st_read(con, sub_name)
+      data <- sf::st_read(con, paste0("envdata.",sub_name))
       } else{
 
         data <- sf::st_read(dsn = con,
@@ -116,7 +116,7 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "tif")){
       if(is.null(extent)){
-      data <- rpostgis::pgGetRast(conn = con, name = sub_name)
+      data <- rpostgis::pgGetRast(conn = con, name = paste0("envdata.",sub_name))
       } else{
         data <- rpostgis::pgGetRast(conn = con,
                                     name = sub_name,
@@ -128,7 +128,7 @@ get_geodata <- function(name = NULL, extent = NULL){
     if(stringr::str_detect(name, "gpkg")){
 
       if(is.null(extent)){
-        data <- sf::st_read(con, sub_name)
+        data <- sf::st_read(con, paste0("envdata.",sub_name))
       } else{
 
         data <- sf::st_read(dsn = con,
