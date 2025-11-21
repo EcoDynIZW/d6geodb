@@ -132,7 +132,7 @@ get_geodata <- function(name = NULL, extent = NULL){
       } else{
 
         data <- sf::st_read(dsn = con,
-                            query = glue::glue("SELECT * FROM ",
+                            query = glue::glue("SELECT * FROM envdata.",
                                                sub_name,
                                                " WHERE ST_Intersects(geometry, ST_MakeEnvelope(",
                                                as.numeric(ext[1]),", ",
