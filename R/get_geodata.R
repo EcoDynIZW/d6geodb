@@ -63,7 +63,7 @@ get_geodata <- function(name = NULL, extent = NULL){
       }
 
       if(class(extent)[1] == "SpatRaster"){
-        ext_ras <- terra::ext(terra::project(extent, meta$crs))
+        ext_ras <- terra::project(terra::ext(extent), terra::crs(extent), meta$crs)
         ext <- c(as.numeric(ext_ras[1]), as.numeric(ext_ras[3]),
                  as.numeric(ext_ras[2]), as.numeric(ext_ras[4]))
       }
@@ -91,13 +91,13 @@ get_geodata <- function(name = NULL, extent = NULL){
 
         data <- sf::st_read(dsn = con,
                             query = glue::glue("SELECT * FROM envdata.",
-                                                       sub_name,
-                                                       " WHERE ST_Intersects(geometry, ST_MakeEnvelope(",
-                                                       as.numeric(ext[1]),", ",
-                                                       as.numeric(ext[2]),", ",
-                                                       as.numeric(ext[3]),", ",
-                                                       as.numeric(ext[4]),", ",
-                                                       as.numeric(meta$epsg),"))"),
+                                               sub_name,
+                                               " WHERE ST_Intersects(geometry,  ST_MakeEnvelope(",
+                                               ext[1],", ",
+                                               ext[2],", ",
+                                               ext[3],", ",
+                                               ext[4],", ",
+                                               meta$epsg,"))"),
                                                )
 
 
@@ -134,12 +134,12 @@ get_geodata <- function(name = NULL, extent = NULL){
         data <- sf::st_read(dsn = con,
                             query = glue::glue("SELECT * FROM envdata.",
                                                sub_name,
-                                               " WHERE ST_Intersects(geometry, ST_MakeEnvelope(",
-                                               as.numeric(ext[1]),", ",
-                                               as.numeric(ext[2]),", ",
-                                               as.numeric(ext[3]),", ",
-                                               as.numeric(ext[4]),", ",
-                                               as.numeric(meta$epsg),"))"),
+                                               " WHERE ST_Intersects(geometry,  ST_MakeEnvelope(",
+                                               ext[1],", ",
+                                               ext[2],", ",
+                                               ext[3],", ",
+                                               ext[4],", ",
+                                               meta$epsg,"))"),
         )
 
 
