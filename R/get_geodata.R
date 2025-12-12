@@ -86,7 +86,9 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "gpkg")){
       if(is.null(extent)){
-      data <- sf::st_read(con, paste0("envdata.",sub_name))
+      data <- sf::st_read(dsn = con,
+                          query = glue::glue("SELECT * FROM envdata.",
+                                             sub_name))
       } else{
 
         data <- sf::st_read(dsn = con,
@@ -128,7 +130,9 @@ get_geodata <- function(name = NULL, extent = NULL){
     if(stringr::str_detect(name, "gpkg")){
 
       if(is.null(extent)){
-        data <- sf::st_read(con, paste0("envdata.",sub_name))
+        data <- sf::st_read(dsn = con,
+                            query = glue::glue("SELECT * FROM envdata.",
+                                               sub_name))
       } else{
 
         data <- sf::st_read(dsn = con,
