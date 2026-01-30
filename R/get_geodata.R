@@ -26,7 +26,7 @@ get_geodata <- function(name = NULL, extent = NULL){
                                         table = "metadata"))
 
     col <- c(fields[fields %in% c("name", "type", "region", "year_of_data")])[utils::menu(c(fields[fields %in% c("name", "type", "region", "year_of_data")]),
-                                                                           title = "select column")]
+                                                                                          title = "select column")]
 
 
     # does not work so far
@@ -86,9 +86,9 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "gpkg")){
       if(is.null(extent)){
-      data <- sf::st_read(dsn = con,
-                          query = glue::glue("SELECT * FROM envdata.",
-                                             sub_name))
+        data <- sf::st_read(dsn = con,
+                            query = glue::glue("SELECT * FROM envdata.",
+                                               sub_name))
       } else{
 
         data <- sf::st_read(dsn = con,
@@ -100,7 +100,7 @@ get_geodata <- function(name = NULL, extent = NULL){
                                                ext[3],", ",
                                                ext[4],", ",
                                                meta$epsg,"))"),
-                                               )
+        )
 
 
 
@@ -118,10 +118,10 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "tif")){
       if(is.null(extent)){
-      data <- rpostgis::pgGetRast(conn = con, name = paste0("envdata.",sub_name))
+        data <- rpostgis::pgGetRast(conn = con, name = c("envdata",sub_name))
       } else{
         data <- rpostgis::pgGetRast(conn = con,
-                                    name = paste0("envdata.",sub_name),
+                                    name = c("envdata",sub_name),
                                     boundary = c(ext[4], ext[2],
                                                  ext[3], ext[1]))
       }
@@ -181,28 +181,28 @@ get_geodata <- function(name = NULL, extent = NULL){
               row.names = FALSE)
 
     if(download_data == TRUE){
-    if(stringr::str_detect(name, "gpkg")){
+      if(stringr::str_detect(name, "gpkg")){
 
 
-      sf::st_write(data,
-                   paste(getwd(),
-                         "data",
-                         name,
-                         stringi::stri_replace_last_fixed(name, "_", "."),
-                         sep = "/"), delete_layer = TRUE)
+        sf::st_write(data,
+                     paste(getwd(),
+                           "data",
+                           name,
+                           stringi::stri_replace_last_fixed(name, "_", "."),
+                           sep = "/"), delete_layer = TRUE)
 
-    }
+      }
 
-    if(stringr::str_detect(name, "tif")){
+      if(stringr::str_detect(name, "tif")){
 
-      terra::writeRaster(data,
-                         paste(getwd(),
-                               "data",
-                               name,
-                               stringi::stri_replace_last_fixed(name, "_", "."),
-                               sep = "/"), overwrite = TRUE)
+        terra::writeRaster(data,
+                           paste(getwd(),
+                                 "data",
+                                 name,
+                                 stringi::stri_replace_last_fixed(name, "_", "."),
+                                 sep = "/"), overwrite = TRUE)
 
-    }
+      }
     }
   }
 
