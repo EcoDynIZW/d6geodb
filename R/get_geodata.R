@@ -73,11 +73,11 @@ get_geodata <- function(name = NULL, extent = NULL){
 
     if(stringr::str_detect(name, "tif")){
       if(is.null(extent)){
-        data <- rpostgis::pgGetRast(conn = con, name = paste0("envdata.",sub_name))
+        data <- rpostgis::pgGetRast(conn = con, name = c("envdata",sub_name))
       } else{
 
         data <- rpostgis::pgGetRast(conn = con,
-                                    name = paste0("envdata.",sub_name),
+                                    name = c("envdata",sub_name),
                                     boundary = c(ext[4], ext[2],
                                                  ext[3], ext[1]))
 
